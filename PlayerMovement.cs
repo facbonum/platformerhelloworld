@@ -2,54 +2,63 @@ using Godot;
 
 public partial class Player : CharacterBody3D
 {
-	// How fast the player moves in meters per second.
-	[Export]
-	public int Speed { get; set; } = 14;
-	// The downward acceleration when in the air, in meters per second squared.
-	[Export]
-	public int FallAcceleration { get; set; } = 75;
+	// Movement speed in meters per second
+	[Export] public float Speed { get; set; } = 14f;
+	// Gravity applied while in the air
+	[Export] public float FallAcceleration { get; set; } = 75f;
+	// Jump force
+	[Export] public float JumpVelocity { get; set; } = 20f;
 
-	private Vector3 _targetVelocity = Vector3.Zero;
+	private Vector3 _velocity = Vector3.Zero;
 
 	public override void _PhysicsProcess(double delta)
 	{
-		var direction = Vector3.Zero;
+		Vector3 direction = Vector3.Zero;
 
+		// Get movement input
 		if (Input.IsActionPressed("move_right"))
-		{
 			direction.X += 1.0f;
-		}
 		if (Input.IsActionPressed("move_left"))
-		{
 			direction.X -= 1.0f;
-		}
 		if (Input.IsActionPressed("move_back"))
-		{
 			direction.Z += 1.0f;
-		}
 		if (Input.IsActionPressed("move_forward"))
-		{
 			direction.Z -= 1.0f;
-		}
 
+		// Normalize the direction to avoid diagonal speed increase
 		if (direction != Vector3.Zero)
 		{
 			direction = direction.Normalized();
 			GetNode<Node3D>("Pivot").Basis = Basis.LookingAt(direction);
 		}
 
-		// Ground velocity
-		_targetVelocity.X = direction.X * Speed;
-		_targetVelocity.Z = direction.Z * Speed;
+		// Update horizontal velocity
+		_velocity.X = direction.X * Speed;
+		_velocity.Z = direction.Z * Speed;
 
-		// Vertical velocity
-		if (!IsOnFloor()) // If in the air, fall towards the floor. Literally gravity
+		// Apply gravity
+		if (!IsOnFloor())
 		{
-			_targetVelocity.Y -= FallAcceleration * (float)delta;
+			_velocity.Y -= FallAcceleration * (float)delta;
 		}
 
-		// Moving the character
-		Velocity = _targetVelocity;
+		// Jumping logic
+		if (Input.IsActionJustPressed("jump") && IsOnFloor())
+		{
+			_velocity.Y = JumpVelocity;
+		}
+
+		// Apply movement
+		Velocity = _velocity;
 		MoveAndSlide();
 	}
+	public void ResetToGround()
+{
+	var ground = GetNodeOrNull<Node3D>("GroundMesh"); // Adjust path
+	if (ground != null)
+	{
+		GlobalTransform = new Transform3D(Basis.Identity, ground.GlobalTransform.Origin + new Vector3(0, 2, 0));
+	}
+}
+
 }

@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://dv4j50is5sfle"]
+[gd_scene load_steps=11 format=3 uid="uid://dv4j50is5sfle"]
 
 [ext_resource type="Script" uid="uid://d3nvc8xjuq38o" path="res://player.gd" id="1_a202f"]
 
@@ -16,16 +16,18 @@ sky = SubResource("Sky_noarx")
 tonemap_mode = 2
 glow_enabled = true
 
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_4xowi"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_4xowi"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_a202f"]
+
 [sub_resource type="PlaneMesh" id="PlaneMesh_a202f"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_a202f"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_a202f"]
-size = Vector3(60, 2, 60)
-
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_4xowi"]
-
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_4xowi"]
+size = Vector3(60, 1.5, 60)
 
 [node name="Node3D" type="Node3D"]
 
@@ -33,35 +35,37 @@ size = Vector3(60, 2, 60)
 environment = SubResource("Environment_a0tk4")
 
 [node name="Player" type="RigidBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.1746, 0, 0)
 script = ExtResource("1_a202f")
 
-[node name="Ground" type="StaticBody3D" parent="Player"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Player/Ground"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49.3177, 8.10271, -7.1175)
-custom_aabb = AABB(60, 2, 60, 60, 2, 60)
-mesh = SubResource("PlaneMesh_a202f")
-surface_material_override/0 = SubResource("StandardMaterial3D_a202f")
-
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Player/Ground"]
-transform = Transform3D(0.231103, 0, -0.972929, 0, 1, 0, 0.972929, 0, 0.231103, 2.48174, 18.3102, 1.52431)
-shadow_enabled = true
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Player/Ground"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 46.0566, 1, -14.2934)
-shape = SubResource("BoxShape3D_a202f")
-
 [node name="PlayerCollisionMesh" type="CollisionShape3D" parent="Player"]
-transform = Transform3D(1, 0, 0, 0, 0.453259, 0.891379, 0, -0.891379, 0.453259, -26.3446, -16.0472, 17.2661)
+auto_translate_mode = 1
+transform = Transform3D(0.236914, 0.730505, -0.640495, -0.899667, 0.4138, 0.139173, 0.366704, 0.54326, 0.755246, 48.2971, 2, 8.7394)
+visibility_parent = NodePath("../PlayerMesh")
 shape = SubResource("CapsuleShape3D_4xowi")
 
 [node name="PlayerMesh" type="MeshInstance3D" parent="Player"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.6351, 4.02895, 0)
+transform = Transform3D(0.237057, 0.730841, -0.64006, -0.899761, 0.413633, 0.139058, 0.366379, 0.542936, 0.755637, 48.1887, 2, 8.63305)
 mesh = SubResource("CapsuleMesh_4xowi")
 skeleton = NodePath("../..")
 
 [node name="Camera3D" type="Camera3D" parent="."]
 auto_translate_mode = 1
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.245, 11.5761, 4.58766)
-fov = 134.9
+transform = Transform3D(-0.955278, -5.17032e-08, 0.295708, 0, 1, 1.74846e-07, -0.295708, 1.67026e-07, -0.955278, 14.7599, 3.48878, -0.928442)
+fov = 88.67
+
+[node name="Ground" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
+physics_material_override = SubResource("PhysicsMaterial_a202f")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ground"]
+custom_aabb = AABB(60, 1, 60, 60, 1, 60)
+mesh = SubResource("PlaneMesh_a202f")
+surface_material_override/0 = SubResource("StandardMaterial3D_a202f")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground"]
+shape = SubResource("BoxShape3D_a202f")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.231103, 0, -0.972929, 0, 1, 0, 0.972929, 0, 0.231103, 2.48174, 17.3102, 1.52431)
+shadow_enabled = true
